@@ -7,7 +7,6 @@ authors = [
 ]
 dependencies = [
     "boto3>=1.34.152",
-    "replace-bixby @ file:///${PROJECT_ROOT}/",
     "python-dotenv>=1.0.1",
 ]
 requires-python = "==3.12.*"
