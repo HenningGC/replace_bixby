@@ -6,7 +6,7 @@ import yaml
 import os
 
 
-def preprocess_data():
+def load_data():
     with open('config/preprocess_config.yml', 'r') as file:
     config = yaml.safe_load(file)
 
@@ -17,6 +17,27 @@ handler.merge_files(method=config['pre_process_datasets']['instruction_dataset']
 handler.merge_files(method=config['pre_process_datasets']['instruction_dataset']['merge_method'], input_folder='data/instruction', output_file='data/instrTrainSet.json',common_str='_audiodialogues_')
 
 
+def read_ndjson(file_path):
+    objects = []
+    with open(file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+        for i in range(0,16256):
+            line = lines[i]
+            line_val = json.loads(line)
+            objects.append(
+                {
+                    "Utterance": line_val['question_text'],
+                    "Instruction": False
+                }
+            )
+    with open('data/natural/naturalTrainSet.json', 'w') as out_file:
+        json.dump(objects, out_file, indent=4)
+
+read_ndjson('data/natural/naturalAudio.json')
+
+# accepts raw data directories from config
+def load_data():
+
 
 if __name__ == "__main__":
-    preprocess_data()
+    load_data()

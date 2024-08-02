@@ -7,29 +7,17 @@ import os
 import json
 
 
-class S3FileConfig(BaseModel):
-    bucket_name: str = Field(..., description="The S3 bucket name")
-    prefix: str = Field(..., description="The S3 prefix to list objects from")
-
-
 class FileHandler:
-    def __init__(self):
+    def __init__(self, client, config):
         self.merge_strategies: Dict[str, Callable] = {
-            'merge_json_files_file_name': self._merge_json_files_file_name
-            # Add more strategies here
+            'merge_json_files_file_name': self._merge_json_files_file_name,
+            'merge_two_json_files': self._merge_two_json_files,
         }
 
-    def list_files(self, s3_config: S3FileConfig) -> List[str]:
-        response = self.client.list_objects_v2(Bucket=s3_config.bucket_name, Prefix=s3_config.prefix)
-        return [obj['Key'] for obj in response.get('Contents', [])][1:]
-    
-    def download_file(self, s3_config: S3FileConfig, s3_file_name: str, output_file_name: str):
-        self.client.download_file(s3_config.bucket_name, s3_file_name, output_file_name)
+    def process_files(self, input_dir: str, output_dir: str, fileProcessor: Callable):
 
-    def process_files(self, s3_config: S3FileConfig, output_dir: str, fileProcessor: Callable):
-        files = self.list_files(dataset)
-        for s3_file_name in files:
-            file_name = s3_file_name.split('/')[-1]
+        for file_name in os.listdir(input_dir):
+            file_name = file_name.split('/')[-1]
             output_file_name = os.path.join(output_dir, file_name)
             
             # Extract utterances and save to local file
@@ -59,3 +47,18 @@ class FileHandler:
             json.dump(merged_data, out_file, indent=4)
 
         print(f"Merged JSON data saved to {output_file}")
+
+    def _merge_two_json_files(self, input_file_1: str, input_file_2: str, output_file: str):
+        merged_data = []
+        with open(input_file_1, 'r') as file1:
+            data1 = json.load(file1)
+            merged_data.extend(data1)
+
+        with open(input_file_2, 'r') as file2:
+            data2 = json.load(file2)
+            merged_data.extend(data2)
+
+        with open(output_file, 'w') as out_file:
+            json.dump(merged_data, out_file, indent=4)
+
+        print(f"Merged JSON data from {input_file_1} and {input_file_2} saved to {output_file}")
