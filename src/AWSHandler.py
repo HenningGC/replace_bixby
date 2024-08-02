@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, SecretStr
-from typing import Literal, Optional
+from typing import Literal, Optional, Dict
 import os
 import boto3
 from botocore.client import BaseClient
@@ -34,3 +34,30 @@ class AWSClient:
 
     def get_client(self) -> BaseClient:
         return self.client
+
+
+class S3Downloader:
+
+    def __init__(self, bucket_name: str, prefix: str, output_dir: str, config: AWSClientConfig):
+        load_dotenv(find_dotenv())
+        self.bucket_name = bucket_name
+        self.prefix = prefix
+        self.output_dir = output_dir
+        self.s3_client = AWSClient(config=config).get_client()
+
+
+    def list_files(self):
+        response = self.s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+        return [obj['Key'] for obj in response.get('Contents', [])][1:]
+
+    def download_file(self, s3_file_name: str, output_file_name: str):
+        self.s3_client.download_file(bucket_name, s3_file_name, output_file_name)
+
+    def process_files(self,fileProcessor):
+        files = self.list_files()
+
+        for s3_file_name in files:
+            file_name = s3_file_name.split('/')[-1]
+            output_file_name = self.output_dir
+            self.download_file(s3_file_name, output_file_name)
+            fileProcessor(output_file_name)

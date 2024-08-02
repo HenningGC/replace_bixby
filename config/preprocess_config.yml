@@ -1,0 +1,14 @@
+
+pre_process_datasets:
+  instruction_dataset:
+    dataset: "instruction"
+    s3_bucket: "asrapp-audios"
+    s3_path: "instruction_audio/"
+    local_path: "data/instruction/"
+    merge_method: "merge_json_files_file_name"
+
+  natural_questions_dataset:
+    dataset: "natural_questions"
+    s3_bucket: "asrapp-audios"
+    s3_path: "iasrapp-audios"
+    local_path: "data/natural/"
