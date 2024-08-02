@@ -8,7 +8,7 @@ import os
 
 def load_data():
     with open('config/preprocess_config.yml', 'r') as file:
-    config = yaml.safe_load(file)
+        config = yaml.safe_load(file)
 
 print(config)
 handler = FileHandler()
@@ -37,6 +37,7 @@ read_ndjson('data/natural/naturalAudio.json')
 
 # accepts raw data directories from config
 def load_data():
+    pass
 
 
 if __name__ == "__main__":
