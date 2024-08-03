@@ -1,5 +1,5 @@
 
-load_datasets:
+preprocess_datasets:
   instruction_dataset:
     dataset: "instruction"
     s3_bucket: "asrapp-audios"

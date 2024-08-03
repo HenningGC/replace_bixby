@@ -39,6 +39,6 @@ def download_data():
 
 
     
-# Takes a configuration profile with bucket name, outputdir etc.
+# TODO: Takes a configuration profile specifying bucket name, outputdir etc.
 if __name__ == "__main__":
     download_data()

@@ -17,3 +17,20 @@ def extract_utterances(output_file_name):
 
     with open(output_file_name, 'w') as out_file:
         json.dump(utterances, out_file, indent=4)
+
+
+def read_ndjson(file_path):
+        objects = []
+        with open(file_path, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+            for i in range(0,16256):
+                line = lines[i]
+                line_val = json.loads(line)
+                objects.append(
+                    {
+                        "Utterance": line_val['question_text'],
+                        "Instruction": False
+                    }
+                )
+        with open('data/natural/naturalTrainSet.json', 'w') as out_file:
+            json.dump(objects, out_file, indent=4)
