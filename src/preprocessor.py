@@ -44,6 +44,6 @@ class Preprocessor:
     @staticmethod
     def merge_files(method: Callable, *args, **kwargs):
 
-        return method(*args, **kwargs)
+        return method(*args, *args, **kwargs)
 
 

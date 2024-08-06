@@ -1,1 +1,27 @@
+pipeline:
+  - stage: "set_credentials"
+    params:
+      region_name: "us-east-1" 
+      aws_access_key_id: None
+      aws_secret_access_key: None
 
+  - stage: "download_files"
+    method: "download_from_s3"
+    params:
+      s3_bucket: "asrapp-audios"
+      prefix: "instruction_audio/"
+      contain_str: "instruction_"
+      extension: "json"
+      output_dir: "tests/"
+
+  - stage: "merge_files"
+    method: "_merge_json_files_file_name"
+    params:
+      input_folder: "tests"
+      output_file: "tests/train_set.json"
+      common_str: "instruction"
+
+  - stage: "process_file"
+    method: "extract_utterances"
+    params:
+      file_path: "tests/train_set.json"

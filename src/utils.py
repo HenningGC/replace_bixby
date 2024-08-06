@@ -1,4 +1,8 @@
 import json
+import yaml
+from dotenv import load_dotenv
+from typing import Any, Dict, List
+import os
 
 def extract_utterances(output_file_name):
     with open(output_file_name, 'r') as file:
@@ -49,13 +53,13 @@ def _merge_json_files_file_name(input_folder: str, output_file: str, common_str:
 
     print(f"Merged JSON data saved to {output_file}")
 
-def _merge_two_json_files(input_file_1: File, input_file_2: File, output_file: str):
+def _merge_two_json_files(input_file_1: str, input_file_2: str, output_file: str):
     merged_data = []
-    with open(input_file_1.path, 'r') as file1:
+    with open(input_file_1, 'r') as file1:
         data1 = json.load(file1)
         merged_data.extend(data1)
 
-    with open(input_file_2.path, 'r') as file2:
+    with open(input_file_2, 'r') as file2:
         data2 = json.load(file2)
         merged_data.extend(data2)
 
@@ -63,3 +67,19 @@ def _merge_two_json_files(input_file_1: File, input_file_2: File, output_file: s
         json.dump(merged_data, out_file, indent=4)
 
     print(f"Merged JSON data from {input_file_1} and {input_file_2} saved to {output_file}")
+
+def load_config_update_credentials(config_path: str) -> List:
+    with open(config_path, 'r') as file:
+        config_dict = yaml.safe_load(file)
+
+    update_credentials(config_dict=config_dict)
+
+    return config_dict.get('pipeline','')
+
+def update_credentials(config_dict: Dict[str, Any]):
+    load_dotenv()
+
+    config_dict['pipeline'][0]['params']['aws_access_key_id'] = os.getenv("AWS_ACCESS_KEY")
+    config_dict['pipeline'][0]['params']['aws_secret_access_key'] = os.getenv("AWS_SECRET_KEY")
+
+    return config_dict
