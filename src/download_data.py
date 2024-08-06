@@ -15,7 +15,7 @@ def download_from_s3(client, bucket_name, s3_file_name, output_file_name):
     client.download_file(bucket_name, s3_file_name, output_file_name)
 
 
-def download_data():
+def download_data(how: Config):
     load_dotenv()
 
     s3_client = AWSClient(config=AWSClientConfig(
@@ -36,9 +36,4 @@ def download_data():
 
         print(f"Extracted and saved utterances to {output_file_name}")
 
-
-
-    
 # TODO: Takes a configuration profile specifying bucket name, outputdir etc.
-if __name__ == "__main__":
-    download_data()
