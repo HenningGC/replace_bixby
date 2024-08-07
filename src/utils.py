@@ -39,7 +39,7 @@ def read_ndjson(file_path):
         with open('data/natural/naturalTrainSet.json', 'w') as out_file:
             json.dump(objects, out_file, indent=4)
 
-def _merge_json_files_file_name(input_folder: str, output_file: str, common_str: str):
+def merge_json_files_file_name(input_folder: str, output_file: str, common_str: str):
     merged_data = []
 
     for filename in os.listdir(input_folder):
@@ -53,7 +53,7 @@ def _merge_json_files_file_name(input_folder: str, output_file: str, common_str:
 
     print(f"Merged JSON data saved to {output_file}")
 
-def _merge_two_json_files(input_file_1: str, input_file_2: str, output_file: str):
+def merge_two_json_files(input_file_1: str, input_file_2: str, output_file: str):
     merged_data = []
     with open(input_file_1, 'r') as file1:
         data1 = json.load(file1)
@@ -68,18 +68,8 @@ def _merge_two_json_files(input_file_1: str, input_file_2: str, output_file: str
 
     print(f"Merged JSON data from {input_file_1} and {input_file_2} saved to {output_file}")
 
-def load_config_update_credentials(config_path: str) -> List:
+def load_config(config_path: str) -> Dict[str, str]:
     with open(config_path, 'r') as file:
         config_dict = yaml.safe_load(file)
-
-    update_credentials(config_dict=config_dict)
-
-    return config_dict.get('pipeline','')
-
-def update_credentials(config_dict: Dict[str, Any]):
-    load_dotenv()
-
-    config_dict['pipeline'][0]['params']['aws_access_key_id'] = os.getenv("AWS_ACCESS_KEY")
-    config_dict['pipeline'][0]['params']['aws_secret_access_key'] = os.getenv("AWS_SECRET_KEY")
 
     return config_dict

@@ -41,9 +41,23 @@ class Preprocessor:
         
         print(f"Saved processed file to {output_file_name}")
 
-    @staticmethod
-    def merge_files(method: Callable, *args, **kwargs):
+    @classmethod
+    def merge_json_files_file_name(cls, input_folder: str, output_file: str, common_str: str):
+        merged_data = []
 
-        return method(*args, *args, **kwargs)
+        for filename in os.listdir(input_folder):
+            if common_str in filename and filename.endswith('.json'):
+                with open(os.path.join(input_folder, filename), 'r') as file:
+                    data = json.load(file)
+                    merged_data.extend(data)
+
+        with open(output_file, 'w') as out_file:
+            json.dump(merged_data, out_file, indent=4)
+
+    @classmethod
+    def merge_files(cls, strategy: Callable, *args, **kwargs):
+        
+        merge_strategy_to_call = getattr(cls, strategy)
+        return merge_strategy_to_call(*args, **kwargs)
 
 

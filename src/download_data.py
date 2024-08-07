@@ -18,7 +18,7 @@ class DataDownloader:
     @staticmethod
     def list_files_in_s3(aws_client: AWSClient, s3_config: S3FileConfig) -> List[str]:
         response = aws_client.list_objects_v2(Bucket=s3_config.bucket_name, Prefix=s3_config.prefix)
-        return [obj['Key'] for obj in response.get('Contents', []) if s3_config.contain_str in obj['Key'] and obj['Key'].endswith(s3_config.extension)]
+        return [obj['Key'] for obj in response.get('Contents', []) if s3_config.contain_str in obj['Key'].split('/')[-1] and obj['Key'].endswith(s3_config.extension)]
 
     @staticmethod
     def download_from_s3(aws_client: AWSClient, s3_config: S3FileConfig, s3_file_name: str, output_file_name: str):
@@ -34,4 +34,4 @@ class DataDownloader:
             # Download the file from S3
             cls.download_from_s3(aws_client, s3_config, s3_file_name, output_file_name)
 
-            print(f"Extracted and saved utterances to {output_file_name}")
+            print(f"Downloaded file {file_name} to {s3_config.output_dir}")
